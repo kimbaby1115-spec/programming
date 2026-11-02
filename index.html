@@ -1,38 +1,121 @@
-<!-- 7주차 기존 결과 화면 하단에 연결되는 새 기능 섹션 -->
-<section id="challenge-section" class="section">
-  <h2>📅 나만의 독서 챌린지 설정</h2>
-  <p class="instruction">이 책을 언제까지 읽으실 건가요? 목표를 설정하면 하루 권장 독서량을 계산해 드립니다.</p>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NuTrim - 스마트 AI 식단 가이드 앱</title>
+  <!-- Google Fonts: 프리미엄 앱 감성의 폰트 적용 -->
+  <link rel="preconnect" href="https://googleapis.com">
+  <link rel="preconnect" href="https://gstatic.com" crossorigin>
+  <link href="https://googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-  <form id="challenge-form" novalidate>
-    <!-- 입력 및 레이블 안내 -->
-    <div class="input-group">
-      <label for="total-pages">총 페이지 수</label>
-      <input type="number" id="total-pages" placeholder="예: 320" required>
-    </div>
+  <!-- 모바일 앱 레이아웃 모킹 컨테이너 -->
+  <div class="app-container">
+    
+    <!-- 앱 상단 헤더 -->
+    <header class="app-header">
+      <div class="logo">NuTrim <span>AI</span></div>
+      <div class="status-badge">Live Beta</div>
+    </header>
 
-    <div class="input-group">
-      <label for="target-days">목표 기간 (일)</label>
-      <input type="number" id="target-days" placeholder="예: 7" required>
-    </div>
+    <main class="app-content">
+      
+      <!-- [7주차 기존 기능 영역]: 목적 및 성향 분석 -->
+      <section id="step1-section" class="card">
+        <div class="card-tag">STEP 01. 기존 설정</div>
+        <h2 class="card-title">오늘의 건강 목적 선택</h2>
+        <p class="card-desc">7주차에 정의된 사용자의 기본 건강 목적 데이터를 기반으로 작동합니다.</p>
+        
+        <div class="selection-grid">
+          <button type="button" class="select-box active" data-goal="diet">
+            <span class="icon">🥗</span>
+            <span class="label">체중 감량</span>
+          </button>
+          <button type="button" class="select-box" data-goal="muscle">
+            <span class="icon">💪</span>
+            <span class="label">근육 증량</span>
+          </button>
+          <button type="button" class="select-box" data-goal="health">
+            <span class="icon">🏃</span>
+            <span class="label">건강 유지</span>
+          </button>
+        </div>
+      </section>
 
-    <!-- 다음 행동 버튼 -->
-    <div class="button-group">
-      <button type="button" id="btn-reset" class="btn btn-secondary">다시 설정</button>
-      <button type="submit" id="btn-submit" class="btn btn-primary">챌린지 생성하기</button>
-    </div>
-  </form>
+      <!-- [중간고사 신규 구현 기능 영역]: 목표 기간 및 챌린지 계산 플래너 -->
+      <section id="step2-section" class="card highlight-card">
+        <div class="card-tag special">STEP 02. NEW 기능</div>
+        <h2 class="card-title">목표 체중 & 기한 설정</h2>
+        <p class="card-desc">선택한 목적에 맞춰 AI가 하루 권장 섭취량과 맞춤 플랜을 계산합니다.</p>
 
-  <!-- 피드백 및 결과 피드백 영역 -->
-  <div id="feedback-message" class="feedback hidden" role="alert"></div>
-  
-  <!-- 상태 변화가 반영되는 결과 화면 -->
-  <div id="challenge-result" class="result-box hidden">
-    <h3>🎉 챌린지가 생성되었습니다!</h3>
-    <p class="result-summary">이 책을 <span id="res-days" class="highlight">0</span>일 동안 읽으려면,</p>
-    <p class="result-action">하루에 최소 <span id="res-pages" class="highlight">0</span>페이지씩 읽어야 합니다!</p>
-    <button type="button" id="btn-start" class="btn btn-success">독서 시작하기 (다음 행동)</button>
+        <form id="planner-form" novalidate>
+          <div class="form-group">
+            <label for="target-weight">목표 감량/증량 체중 <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <input type="number" id="target-weight" placeholder="예: 5" required>
+              <span class="unit">kg</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="target-days">달성 목표 기간 <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <input type="number" id="target-days" placeholder="예: 30" required>
+              <span class="unit">일</span>
+            </div>
+          </div>
+
+          <!-- 인터랙티브 피드백 메시지 영역 -->
+          <div id="error-feedback" class="feedback-msg error hidden" role="alert"></div>
+
+          <!-- 앱 스타일 액션 버튼 그룹 -->
+          <div class="btn-group">
+            <button type="button" id="btn-reset" class="btn btn-neutral">다시 설정</button>
+            <button type="submit" id="btn-submit" class="btn btn-primary">AI 칼로리 플랜 생성</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- [상태 변화 결과 화면]: 입력값이 반영되는 대시보드 -->
+      <section id="result-section" class="card result-card hidden">
+        <div class="success-checkmark">✨</div>
+        <h2 class="card-title text-center">AI 맞춤형 플랜이 완성됐습니다!</h2>
+        
+        <div class="dashboard-grid">
+          <div class="dash-item">
+            <div class="dash-label">목표 기간</div>
+            <div class="dash-value"><span id="res-days">0</span>일</div>
+          </div>
+          <div class="dash-item">
+            <div class="dash-label">총 목표 변화</div>
+            <div class="dash-value"><span id="res-weight">0</span>kg</div>
+          </div>
+        </div>
+
+        <div class="caloric-banner">
+          <p class="banner-title">하루 권장 칼로리 조절량</p>
+          <div class="banner-value"><span id="res-calories">0</span> kcal</div>
+          <p class="banner-desc" id="res-desc">매일 이만큼의 칼로리를 더 소모하거나 덜 먹어야 합니다.</p>
+        </div>
+
+        <!-- 다음 과업 유도 버튼 -->
+        <button type="button" id="btn-next" class="btn btn-success">이 식단 플랜으로 시작하기 🚀</button>
+      </section>
+
+    </main>
+
+    <!-- 앱 하단 탭바 (실제 앱처럼 보이게 만드는 디테일) -->
+    <footer class="app-footer">
+      <div class="tab-item active">🏠 <span>홈</span></div>
+      <div class="tab-item">📊 <span>분석</span></div>
+      <div class="tab-item">👤 <span>마이</span></div>
+    </footer>
+
   </div>
-</section>
 
-
+  <script src="script.js"></script>
+</body>
 </html>

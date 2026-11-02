@@ -1,27 +1,273 @@
-/* 상태 표현을 위한 클래스 */
-.hidden { display: none !important; }
-.highlight { font-weight: bold; color: #007bff; font-size: 1.2rem; }
-
-/* 피드백 스타일 */
-.feedback { padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9rem; }
-.feedback.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-
-/* 모바일 우선 반응형 배치 (Flex/Grid 활용) */
-.button-group {
-  display: flex;
-  flex-direction: column; /* 모바일에서는 세로로 길게 배치 */
-  gap: 10px;
-  margin-top: 20px;
+/* 1. 디자인 시스템 정의 */
+:root {
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --bg-app: #f3f4f6;
+  --bg-card: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
 }
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+body {
+  background-color: #e5e7eb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* 2. 스마트폰 어플리케이션 프레임 배치 */
+.app-container {
+  width: 100%;
+  max-width: 430px; /* 아이폰 15 프로 맥스 규격 기준 */
+  height: 880px;
+  background-color: var(--bg-app);
+  border-radius: 40px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 8px solid #1f2937; /* 스마트폰 베젤 느낌 구현 */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* 3. 헤더 & 푸터 (앱 감성 요소) */
+.app-header {
+  background-color: var(--bg-card);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+.app-header .logo {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+.app-header .logo span {
+  font-size: 0.8rem;
+  background: #eeebff;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: 4px;
+}
+.status-badge {
+  font-size: 0.75rem;
+  background: #f3f4f6;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.app-content {
+  flex: 1;
+  overflow-y: auto; /* 내용이 길어지면 내부 스크롤 발생 */
+  padding: 20px;
+  padding-bottom: 40px;
+}
+
+/* 4. 카드 컴포넌트 스태킹 스타일 */
+.card {
+  background-color: var(--bg-card);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.highlight-card {
+  border: 2px solid #e0e7ff;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+}
+.card-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.card-tag.special { color: var(--primary-color); }
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+.card-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+/* 5. 7주차 선택 박스 그리드 */
+.selection-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.select-box {
+  background: #f9fafb;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.select-box .icon { font-size: 1.5rem; margin-bottom: 4px; }
+.select-box .label { font-size: 0.8rem; font-weight: 600; color: var(--text-main); }
+.select-box.active {
+  background: #eeebff;
+  border-color: var(--primary-color);
+}
+
+/* 6. 인풋창 인라인 유닛 스타일 */
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+.form-group label .required { color: var(--error-color); }
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-wrapper input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.input-wrapper input:focus { border-color: var(--primary-color); }
+.input-wrapper .unit {
+  position: absolute;
+  right: 16px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* 7. 버튼 및 피드백 처리 */
+.btn-group { display: flex; gap: 8px; margin-top: 20px; }
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex: 1;
+  transition: opacity 0.2s;
+}
+.btn:active { opacity: 0.8; }
+.btn-primary { background-color: var(--primary-color); color: white; flex: 2; }
+.btn-neutral { background-color: #e5e7eb; color: var(--text-main); }
+.btn-success { background-color: var(--success-color); color: white; width: 100%; margin-top: 15px; }
+
+.feedback-msg {
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  margin-top: 10px;
+  font-weight: 600;
+}
+.feedback-msg.error { background-color: #fee2e2; color: var(--error-color); }
+
+/* 8. 결과 대시보드 컴포넌트 */
+.result-card {
+  background: #f8fafc;
+  border: 2px solid var(--success-color);
+  animation: slideUp 0.4s ease-out;
+}
+.success-checkmark {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0;
+}
+.dash-item {
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid #f1f5f9;
+}
+.dash-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+.dash-value { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+
+.caloric-banner {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 14px;
+  text-align: center;
+}
+.banner-title { font-size: 0.8rem; opacity: 0.9; }
+.banner-value { font-size: 1.6rem; font-weight: 700; margin: 4px 0; }
+.banner-desc { font-size: 0.75rem; opacity: 0.85; }
+
+.app-footer {
+  height: 65px;
+  background: white;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.tab-item span { font-size: 0.65rem; margin-top: 2px; font-weight: 600; }
+.tab-item.active { color: var(--primary-color); }
+
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* 9. 데스크톱 브라우저 최적화 (반응형 코드) */
 @media (min-width: 768px) {
-  .button-group {
-    flex-direction: row; /* 데스크톱에서는 가로로 배치 */
-    justify-content: flex-end;
-  }
-  .input-group {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+  body { background-color: #f3f4f6; }
+  .app-container {
+    max-width: 700px; /* 태블릿/데스크톱 뷰 확장 */
+    height: auto;
+    min-height: 850px;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   }
 }
