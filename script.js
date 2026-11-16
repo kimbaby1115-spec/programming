@@ -327,4 +327,4 @@ document.addEventListener("DOMContentLoaded", () => {
     badgeEl.textContent = getStatusLabel(book.status);
 
     document.getElementById("modal-title").textContent = book.title;
-    document.getElementById("modal-meta").textContent =
+    document.getElementById("modal-meta").textContent = `저자: ${book.author} | 평점: ${"⭐".repeat(Number(book.rating))} (${book.rating}점) | 기록일: ${book.createdAt}`;
