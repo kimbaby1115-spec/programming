@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>북로그 - 나만의 독서 기록 관리</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#/home" class="logo" data-route="/home">📚 북로그</a>
+
+      <!-- 4. 모바일 메뉴 열기·닫기 버튼 -->
+      <button
+        type="button"
+        id="mobile-menu-btn"
+        class="mobile-menu-btn"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+      >
+        메뉴 열기
+      </button>
+
+      <!-- 1. 서비스에 맞는 메뉴 구성 (nav > ul > li) -->
+      <nav id="primary-nav" class="primary-nav" aria-label="주요 메뉴">
+        <ul>
+          <li><a href="#/home" data-route="/home">서비스 소개</a></li>
+          <li><a href="#/add" data-route="/add">독서 기록 추가</a></li>
+          <li><a href="#/list" data-route="/list">내 서재 목록</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 화면 1: 서비스 소개 (#/home) -->
+    <section id="view-home" class="view-section" data-view="/home">
+      <div class="hero-card">
+        <h1>오늘 읽은 책, 잊지 말고 기록하세요</h1>
+        <p>읽고 있는 책과 완독한 책을 상태별로 정리하고 나만의 독서 통계를 한눈에 확인하는 개인 서재 서비스입니다.</p>
+        <div class="hero-actions">
+          <a href="#/add" class="btn primary">새 독서 기록 작성하기</a>
+          <a href="#/list" class="btn secondary">내 서재 목록 보기</a>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <span class="label">전체 등록 도서</span>
+          <strong id="stat-total">0권</strong>
+        </div>
+        <div class="summary-card">
+          <span class="label">읽는 중</span>
+          <strong id="stat-reading">0권</strong>
+        </div>
+        <div class="summary-card">
+          <span class="label">완독 완료</span>
+          <strong id="stat-completed">0권</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- 화면 2: 독서 기록 추가 (#/add) -->
+    <section id="view-add" class="view-section" data-view="/add" hidden>
+      <h2>새 독서 기록 추가</h2>
+      <p class="section-desc">도서 정보와 현재 독서 상태를 입력하면 내 서재에 저장됩니다.</p>
+
+      <form id="book-form" class="card-form">
+        <div class="form-group">
+          <label for="book-title">도서명 *</label>
+          <input type="text" id="book-title" required placeholder="예: 모던 자바스크립트 Deep Dive" />
+        </div>
+
+        <div class="form-group">
+          <label for="book-author">저자 *</label>
+          <input type="text" id="book-author" required placeholder="예: 이웅모" />
+        </div>
+
+        <div class="form-group">
+          <label for="book-status">진행 상태 *</label>
+          <select id="book-status">
+            <option value="reading">읽는 중</option>
+            <option value="completed">완독</option>
+            <option value="wishlist">읽고 싶음</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="book-memo">한 줄 감상평</label>
+          <textarea id="book-memo" rows="3" placeholder="기억에 남는 문장이나 소감을 적어주세요."></textarea>
+        </div>
+
+        <button type="submit" class="btn primary full">서재에 저장하기</button>
+      </form>
+    </section>
+
+    <!-- 화면 3: 내 서재 목록 및 필터 (#/list) -->
+    <section id="view-list" class="view-section" data-view="/list" hidden>
+      <div class="list-header">
+        <div>
+          <h2>내 서재 목록</h2>
+          <p class="section-desc">진행 상태별로 도서를 필터링하고 상세 내용을 확인하세요.</p>
+        </div>
+        <button type="button" id="reset-sample-btn" class="btn small">샘플 데이터 복원</button>
+      </div>
+
+      <!-- 3. 목록 필터 (전체 포함 4가지) -->
+      <div class="filter-bar" role="group" aria-label="독서 진행 상태 필터">
+        <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">전체</button>
+        <button type="button" class="filter-btn" data-filter="reading" aria-pressed="false">읽는 중</button>
+        <button type="button" class="filter-btn" data-filter="completed" aria-pressed="false">완독</button>
+        <button type="button" class="filter-btn" data-filter="wishlist" aria-pressed="false">읽고 싶음</button>
+      </div>
+
+      <!-- 결과 수 안내 -->
+      <p id="result-status" class="result-status" aria-live="polite">전체 0권의 도서가 표시됩니다.</p>
+
+      <!-- 목록 출력 영역 -->
+      <ul id="book-list" class="book-list"></ul>
+
+      <!-- 빈 결과 안내 영역 (전체 없음 vs 조건 결과 없음 구분) -->
+      <div id="empty-state" class="empty-state" hidden>
+        <p id="empty-title" class="empty-title"></p>
+        <p id="empty-desc" class="empty-desc"></p>
+        <a href="#/add" id="empty-action-btn" class="btn primary">첫 도서 등록하러 가기</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- 상세 보기 모달 -->
+  <dialog id="detail-modal" class="detail-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span id="modal-badge" class="badge"></span>
+        <button type="button" id="close-modal-btn" class="close-btn" aria-label="상세 창 닫기">✕</button>
+      </div>
+      <h3 id="modal-title"></h3>
+      <p id="modal-author" class="modal-meta"></p>
+      <p id="modal-date" class="modal-meta"></p>
+      <div class="modal-memo-box">
+        <strong>감상평</strong>
+        <p id="modal-memo"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="modal-delete-btn" class="btn danger">기록 삭제</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
